@@ -1,0 +1,186 @@
+# FPGA-Based ECG Arrhythmia Detection Using AMD Zynq-7000
+
+## 1. Project Description
+
+This repository contains the complete implementation of a hardware-accelerated ECG arrhythmia detection system deployed on the AMD Zynq-7000 SoC.
+The system performs fixed-point neural network inference using a custom MLP accelerator synthesized via Vitis HLS and integrated into a Zynq hardware design. 
+The design follows a full hardware-software co-design methodology.
+
+Inference Pipeline:
+ECG Beat (SD Card) → ARM Processing System → AXI → MLP Accelerator (PL) → Classification Result → UART Output
+
+## 2. System Architecture
+
+### 2.1 Processing System (PS)
+
+- ARM Cortex-A9
+- DDR Memory Controller
+- SD Card Interface
+- UART Peripheral
+- AXI Interconnect
+
+### 2.2 Programmable Logic (PL)
+
+- Custom MLP Accelerator IP
+- AXI Lite Control Interface
+- AXI Memory-Mapped Data Interface
+- DSP48-Based Multiply-Accumulate Units
+- Fixed-Point Arithmetic (ap_fixed)
+
+### 2.3 Data Flow
+
+1. ECG beat data stored on SD card  
+2. Data loaded into DDR memory  
+3. Feature vector transmitted to accelerator via AXI  
+4. Fixed-point matrix multiplication and activation computation  
+5. Binary classification generated  
+6. Result returned to ARM and transmitted over UART  
+
+
+## 3. Machine Learning Implementation
+
+### 3.1 Model Architecture
+
+- Fully Connected Multi-Layer Perceptron
+- Input Layer: ECG Beat Samples
+- Hidden Layer: Dense Layer
+- Output Layer: Binary Classification
+
+### 3.2 Training
+
+- Floating-point precision
+- Supervised learning
+- Cross-entropy loss
+- Backpropagation-based weight updates
+
+### 3.3 Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Confusion Matrix
+
+---
+
+## 4. Fixed-Point Quantization
+
+### 4.1 Precision Variants
+
+- 16-bit fixed-point implementation
+- 32-bit fixed-point implementation
+
+### 4.2 Conversion Process
+
+1. Weight scaling using predefined scaling factor  
+2. Conversion to signed fixed-point representation  
+3. Quantization error evaluation  
+4. Export to C header files  
+
+### 4.3 Trade-Off Analysis
+
+- Precision vs DSP utilization  
+- Dynamic range vs saturation risk  
+- Accuracy degradation analysis  
+
+---
+
+## 5. HLS Accelerator Design
+
+### 5.1 Functional Blocks
+
+- Matrix Multiplication Engine
+- Bias Addition
+- Activation Function
+- Threshold Comparator
+
+### 5.2 Implementation Features
+
+- `ap_fixed` datatype
+- Loop pipelining
+- Loop unrolling
+- Resource optimization pragmas
+- Deterministic latency
+
+### 5.3 Verification
+
+- C Simulation (csim)
+- C Synthesis (csynth)
+- Resource Utilization Report
+- Timing Analysis
+
+---
+
+## 6. Vivado Integration
+
+- Zynq Processing System configuration
+- AXI Interconnect setup
+- IP packaging and integration
+- Clock configuration
+- Bitstream generation
+- XSA hardware export
+
+---
+
+## 7. Embedded Application (Vitis)
+
+### 7.1 Functional Flow
+
+1. Platform initialization  
+2. SD card mounting  
+3. ECG beat data loading  
+4. Accelerator register configuration  
+5. Inference execution trigger  
+6. Polling completion flag  
+7. Output retrieval  
+8. UART transmission  
+
+### 7.2 Output Format
+
+Example:
+
+Beat 105: Arrhythmia Detected  
+Beat 106: Normal  
+
+---
+
+## 8. Key Technical Concepts
+
+- Hardware-Software Co-Design
+- Fixed-Point Neural Network Inference
+- AXI Communication Protocol
+- FPGA Resource Optimization
+- Embedded System Integration
+- Deterministic Hardware Acceleration
+
+---
+
+## 9. Development Tools
+
+- Python (NumPy, Pandas)
+- AMD Vitis HLS
+- AMD Vivado
+- AMD Vitis
+- Zynq-7000 SoC
+
+---
+
+## 10. End-to-End Implementation Flow
+
+Floating-Point Training  
+→ Fixed-Point Quantization  
+→ HLS Accelerator Synthesis  
+→ IP Integration in Vivado  
+→ Embedded Software Development  
+→ Real-Time FPGA Inference  
+
+---
+
+## 11. Future Extensions
+
+- Real-Time ADC ECG Acquisition
+- Multi-Class Arrhythmia Classification
+- Convolutional Neural Network Accelerator
+- DMA-Based Data Transfer
+- Wireless Data Transmission
+- Power Optimization for Wearable Deployment
